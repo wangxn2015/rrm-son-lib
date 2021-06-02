@@ -59,6 +59,7 @@ func (h *A3HandoverHandler) runWithNonZeroTTT(ue device.UE, ttt int) {
 	if _, ok := h.HandoverMap[ue.GetID().String()]; !ok {
 		h.HandoverMap[ue.GetID().String()] = NewA3HandoverTimer(ue)
 		go func() {
+			defer delete(h.HandoverMap, ue.GetID().String())
 			startTime := time.Now()
 			targetCellID := h.getTargetCell(ue).GetID().String()
 			for {
@@ -68,7 +69,7 @@ func (h *A3HandoverHandler) runWithNonZeroTTT(ue device.UE, ttt int) {
 					return
 				case ue := <-h.HandoverMap[ue.GetID().String()].TimerChan:
 					tmpTime := time.Now()
-					eTime := tmpTime.Sub(startTime)
+					eTime := tmpTime.Sub(startTime).Milliseconds()
 					tmpTargetCell := h.getTargetCell(ue)
 					tmpTargetCellID := tmpTargetCell.GetID().String()
 
@@ -79,8 +80,9 @@ func (h *A3HandoverHandler) runWithNonZeroTTT(ue device.UE, ttt int) {
 						continue
 					}
 
+
 					// if still same target cell
-					if tmpTargetCellID == targetCellID && eTime.Milliseconds() >= time.Duration(ttt).Milliseconds() {
+					if tmpTargetCellID == targetCellID && eTime >= int64(ttt) {
 						// if next report arrives after TTT
 						hoDecision := NewA3HandoverDecision(ue, tmpTargetCell)
 						h.Chans.OutputChan <- hoDecision
@@ -91,6 +93,8 @@ func (h *A3HandoverHandler) runWithNonZeroTTT(ue device.UE, ttt int) {
 			}
 		}()
 	}
+
+	h.HandoverMap[ue.GetID().String()].TimerChan <- ue
 }
 
 func (h *A3HandoverHandler) getTargetCell(ue device.UE) device.Cell {

@@ -10,7 +10,7 @@ golang: # @HELP compile Golang sources
 
 test: # @HELP run the unit tests and source code validation  producing a golang style report
 test: deps license_check linters
-	go test -race github.com/onosproject/rrm-son-lib/go/pkg/...
+	go test -race github.com/onosproject/rrm-son-lib/pkg/...
 
 jenkins-test:  # @HELP run the unit tests and source code validation producing a junit style report for Jenkins
 jenkins-test: build-tools build deps license_check linters

@@ -28,7 +28,7 @@ func TestA3HandoverWithEventA3Handler_ZeroTTT(t *testing.T) {
 		for ue := range ueChan {
 			eventa3handler.Chans.InputChan <- ue
 		}
-	} ()
+	}()
 
 	// run handover handler
 	go handoverhandler.Run()
@@ -43,9 +43,10 @@ func TestA3HandoverWithEventA3Handler_ZeroTTT(t *testing.T) {
 	counter := 0
 	for {
 		select {
-		case <- time.After(20 * time.Second):
+		case <-time.After(20 * time.Second):
 			assert.FailNow(t, "HO decision messages did not arrive in time or not enough messages arrived")
-		case hoDecision := <- handoverhandler.Chans.OutputChan:
+			return
+		case hoDecision := <-handoverhandler.Chans.OutputChan:
 			counter++
 			fmt.Println(hoDecision)
 			if counter == 10 {
@@ -76,7 +77,7 @@ func UEGeneratorZeroTTT(ch chan device.UE) {
 	ue.GetMeasurements()[measCSCell2.GetCellID().String()] = measCSCell2
 	ue.GetMeasurements()[measCSCell3.GetCellID().String()] = measCSCell3
 
-	for i := 0; i < 10; i ++ {
+	for i := 0; i < 10; i++ {
 		ch <- ue
 		time.Sleep(1 * time.Second)
 	}
@@ -96,7 +97,7 @@ func TestA3HandoverWithEventA3Handler_TwoSecTTT(t *testing.T) {
 		for ue := range ueChan {
 			eventa3handler.Chans.InputChan <- ue
 		}
-	} ()
+	}()
 
 	// run handover handler
 	go handoverhandler.Run()
@@ -111,9 +112,9 @@ func TestA3HandoverWithEventA3Handler_TwoSecTTT(t *testing.T) {
 	counter := 0
 	for {
 		select {
-		case <- time.After(20 * time.Second):
+		case <-time.After(20 * time.Second):
 			assert.FailNow(t, "HO decision messages did not arrive in time or not enough messages arrived")
-		case hoDecision := <- handoverhandler.Chans.OutputChan:
+		case hoDecision := <-handoverhandler.Chans.OutputChan:
 			counter++
 			fmt.Println(hoDecision)
 			if counter == 2 {
@@ -144,7 +145,7 @@ func UEGeneratorTwoSecTTT(ch chan device.UE) {
 	ue.GetMeasurements()[measCSCell2.GetCellID().String()] = measCSCell2
 	ue.GetMeasurements()[measCSCell3.GetCellID().String()] = measCSCell3
 
-	for i := 0; i < 10; i ++ {
+	for i := 0; i < 10; i++ {
 		ch <- ue
 		time.Sleep(1 * time.Second)
 	}

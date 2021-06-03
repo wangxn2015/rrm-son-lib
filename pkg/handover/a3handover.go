@@ -8,6 +8,7 @@ import (
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"github.com/onosproject/rrm-son-lib/pkg/model/device"
 	"github.com/onosproject/rrm-son-lib/pkg/model/measurement"
+	"sync"
 	"time"
 )
 
@@ -26,8 +27,9 @@ func NewA3HandoverHandler() *A3HandoverHandler {
 
 // A3HandoverHandler is A3 handover handler
 type A3HandoverHandler struct {
-	HandoverMap map[string]A3HandoverTimer
-	Chans       A3HandoverChannel
+	HandoverMap  map[string]A3HandoverTimer
+	Chans        A3HandoverChannel
+	HandlerMutex sync.RWMutex
 }
 
 // A3HandoverChannel struct has channels used in A3 handover handler
@@ -56,45 +58,54 @@ func (h *A3HandoverHandler) runWithZeroTTT(ue device.UE) {
 }
 
 func (h *A3HandoverHandler) runWithNonZeroTTT(ue device.UE, ttt int) {
+
+	h.HandlerMutex.Lock()
 	if _, ok := h.HandoverMap[ue.GetID().String()]; !ok {
 		h.HandoverMap[ue.GetID().String()] = NewA3HandoverTimer(ue)
-		go func() {
-			defer delete(h.HandoverMap, ue.GetID().String())
-			startTime := time.Now()
-			targetCellID := h.getTargetCell(ue).GetID().String()
-			for {
-				select {
-				case <-time.After(time.Duration(ttt) * time.Millisecond):
-					// no handover
-					return
-				case ue := <-h.HandoverMap[ue.GetID().String()].TimerChan:
-					tmpTime := time.Now()
-					eTime := tmpTime.Sub(startTime).Milliseconds()
-					tmpTargetCell := h.getTargetCell(ue)
-					tmpTargetCellID := tmpTargetCell.GetID().String()
-
-					// target cell changed - reset timer and target cell
-					if tmpTargetCellID != targetCellID {
-						startTime = time.Now()
-						targetCellID = tmpTargetCellID
-						continue
-					}
-
-
-					// if still same target cell
-					if tmpTargetCellID == targetCellID && eTime >= int64(ttt) {
-						// if next report arrives after TTT
-						hoDecision := NewA3HandoverDecision(ue, tmpTargetCell)
-						h.Chans.OutputChan <- hoDecision
-						log.Debugf("Handover - %v", hoDecision)
-						return
-					}
-				}
-			}
-		}()
+		go h.a3HandoverTimerProc(ue, ttt)
 	}
 
 	h.HandoverMap[ue.GetID().String()].TimerChan <- ue
+	h.HandlerMutex.Unlock()
+}
+
+func (h *A3HandoverHandler) a3HandoverTimerProc(ue device.UE, ttt int) {
+	startTime := time.Now()
+	targetCellID := h.getTargetCell(ue).GetID().String()
+	for {
+		select {
+		case <-time.After(time.Duration(ttt) * time.Millisecond):
+			// no handover
+			h.HandlerMutex.Lock()
+			delete(h.HandoverMap, ue.GetID().String())
+			h.HandlerMutex.Unlock()
+			return
+		case ue := <-h.HandoverMap[ue.GetID().String()].TimerChan:
+			tmpTime := time.Now()
+			eTime := tmpTime.Sub(startTime).Milliseconds()
+			tmpTargetCell := h.getTargetCell(ue)
+			tmpTargetCellID := tmpTargetCell.GetID().String()
+
+			// target cell changed - reset timer and target cell
+			if tmpTargetCellID != targetCellID {
+				startTime = time.Now()
+				targetCellID = tmpTargetCellID
+				continue
+			}
+
+			// if still same target cell
+			if tmpTargetCellID == targetCellID && eTime >= int64(ttt) {
+				// if next report arrives after TTT
+				hoDecision := NewA3HandoverDecision(ue, tmpTargetCell)
+				h.Chans.OutputChan <- hoDecision
+				log.Debugf("Handover - %v", hoDecision)
+				h.HandlerMutex.Lock()
+				delete(h.HandoverMap, ue.GetID().String())
+				h.HandlerMutex.Unlock()
+				return
+			}
+		}
+	}
 }
 
 func (h *A3HandoverHandler) getTargetCell(ue device.UE) device.Cell {

@@ -31,9 +31,9 @@ func TestEventA3Handler_WithUEInEventA3(t *testing.T) {
 	counter := 0
 	for {
 		select {
-		case <- time.After(20 * time.Second):
+		case <-time.After(20 * time.Second):
 			assert.FailNow(t, "Event a3 was not happening")
-		case a3event := <- eventa3handler.Chans.OutputChan:
+		case a3event := <-eventa3handler.Chans.OutputChan:
 			counter++
 			fmt.Println(a3event)
 			if counter == 10 {
@@ -64,7 +64,7 @@ func UEGeneratorEventA3(ch chan device.UE) {
 	ue.GetMeasurements()[measCSCell2.GetCellID().String()] = measCSCell2
 	ue.GetMeasurements()[measCSCell3.GetCellID().String()] = measCSCell3
 
-	for i := 0; i < 10; i ++ {
+	for i := 0; i < 10; i++ {
 		ch <- ue
 		time.Sleep(1 * time.Second)
 	}
@@ -87,9 +87,9 @@ func TestEventA3Handler_WithoutUEInEventA3(t *testing.T) {
 
 	for {
 		select {
-		case <- time.After(20 * time.Second):
+		case <-time.After(20 * time.Second):
 			return
-		case a3event := <- eventa3handler.Chans.OutputChan:
+		case a3event := <-eventa3handler.Chans.OutputChan:
 			fmt.Println(a3event)
 			assert.FailNow(t, "Event a3 should not be arrived")
 		}
@@ -117,7 +117,7 @@ func UEGeneratorNonEventA3(ch chan device.UE) {
 	ue.GetMeasurements()[measCSCell2.GetCellID().String()] = measCSCell2
 	ue.GetMeasurements()[measCSCell3.GetCellID().String()] = measCSCell3
 
-	for i := 0; i < 10; i ++ {
+	for i := 0; i < 10; i++ {
 		ch <- ue
 		time.Sleep(1 * time.Second)
 	}

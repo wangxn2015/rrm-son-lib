@@ -14,7 +14,7 @@ test: deps license_check linters
 
 jenkins-test:  # @HELP run the unit tests and source code validation producing a junit style report for Jenkins
 jenkins-test: build-tools build deps license_check linters
-	TEST_PACKAGES=github.com/onosproject/rrm-son-lib/go/pkg/... ./../build-tools/build/jenkins/make-unit
+	TEST_PACKAGES=github.com/onosproject/rrm-son-lib/pkg/... ./../build-tools/build/jenkins/make-unit
 
 coverage: # @HELP generate unit test coverage data
 coverage: deps linters license_check
@@ -53,7 +53,6 @@ protos: # @HELP compile the protobuf files (using protoc-go Docker)
 
 publish: # @HELP publish version on github and dockerhub
 	./../build-tools/publish-version ${VERSION}
-	./../build-tools/publish-version go/${VERSION}
 
 jenkins-publish: build-tools jenkins-tools # @HELP Jenkins calls this to publish artifacts
 	../build-tools/release-merge-commit

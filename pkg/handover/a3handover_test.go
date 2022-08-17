@@ -6,12 +6,12 @@ package handover
 
 import (
 	"fmt"
-	measurement2 "github.com/onosproject/rrm-son-lib/pkg/measurement"
-	"github.com/onosproject/rrm-son-lib/pkg/model/device"
-	"github.com/onosproject/rrm-son-lib/pkg/model/id"
-	"github.com/onosproject/rrm-son-lib/pkg/model/measurement"
-	meastype "github.com/onosproject/rrm-son-lib/pkg/model/measurement/type"
 	"github.com/stretchr/testify/assert"
+	measurement2 "github.com/wangxn2015/rrm-son-lib/pkg/measurement"
+	"github.com/wangxn2015/rrm-son-lib/pkg/model/device"
+	"github.com/wangxn2015/rrm-son-lib/pkg/model/id"
+	"github.com/wangxn2015/rrm-son-lib/pkg/model/measurement"
+	meastype "github.com/wangxn2015/rrm-son-lib/pkg/model/measurement/type"
 	"testing"
 	"time"
 )

@@ -5,8 +5,8 @@
 package device
 
 import (
-	"github.com/onosproject/rrm-son-lib/pkg/model/id"
-	meastype "github.com/onosproject/rrm-son-lib/pkg/model/measurement/type"
+	"github.com/wangxn2015/rrm-son-lib/pkg/model/id"
+	meastype "github.com/wangxn2015/rrm-son-lib/pkg/model/measurement/type"
 )
 
 // NewCell returns cell object

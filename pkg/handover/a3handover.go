@@ -5,9 +5,9 @@
 package handover
 
 import (
-	"github.com/onosproject/onos-lib-go/pkg/logging"
-	"github.com/onosproject/rrm-son-lib/pkg/model/device"
-	"github.com/onosproject/rrm-son-lib/pkg/model/measurement"
+	"github.com/wangxn2015/onos-lib-go/pkg/logging"
+	"github.com/wangxn2015/rrm-son-lib/pkg/model/device"
+	"github.com/wangxn2015/rrm-son-lib/pkg/model/measurement"
 	"sync"
 	"time"
 )

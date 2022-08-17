@@ -5,8 +5,8 @@
 package device
 
 import (
-	"github.com/onosproject/rrm-son-lib/pkg/model/id"
-	"github.com/onosproject/rrm-son-lib/pkg/model/measurement"
+	"github.com/wangxn2015/rrm-son-lib/pkg/model/id"
+	"github.com/wangxn2015/rrm-son-lib/pkg/model/measurement"
 )
 
 // NewUE returns UE object

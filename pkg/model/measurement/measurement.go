@@ -4,7 +4,7 @@
 
 package measurement
 
-import "github.com/onosproject/rrm-son-lib/pkg/model/id"
+import "github.com/wangxn2015/rrm-son-lib/pkg/model/id"
 
 // Measurement is the interface for Measurement
 type Measurement interface {

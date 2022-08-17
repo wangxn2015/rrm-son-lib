@@ -4,7 +4,7 @@
 
 package device
 
-import "github.com/onosproject/rrm-son-lib/pkg/model/id"
+import "github.com/wangxn2015/rrm-son-lib/pkg/model/id"
 
 // Device is the interface for Device
 type Device interface {

@@ -3,7 +3,8 @@ vendor/*
 *.DS_Store
 coverage.txt
 *.coverprofile*
-.idea
+.idea/
 *report*.xml
 *coverage*.xml
 *-output.out
+.vscode/

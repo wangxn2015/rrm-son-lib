@@ -4,7 +4,8 @@ go 1.15
 
 require (
 	github.com/stretchr/testify v1.7.0
-	github.com/wangxn2015/onos-lib-go v0.7.10
+	github.com/wangxn2015/onos-lib-go v0.8.16-0.20221211095953-88ba820eb386 // indirect
+
 )
 
-replace github.com/wangxn2015/onos-lib-go => /home/baicells/go_project/modified-onos-module/onos-lib-go
+
